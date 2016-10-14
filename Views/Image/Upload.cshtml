@@ -1,0 +1,46 @@
+﻿@model imgstack.Models.ImageUploadViewModel
+
+@{
+    ViewBag.Title = "Upload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<main class="formpage">
+    <h2>Upload</h2>
+
+    @using (Html.BeginForm("UploadPost", "Image", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <table class="tbl-form register">
+            <tr>
+                <td>
+                    <label for="file">file:</label>
+                </td>
+                <td>
+                    <input type="file" name="upimg" id="upimg">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "label" })
+                </td>
+                <td>
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "input" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "val-msg" })
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    @Html.LabelFor(model => model.FK_Stack, htmlAttributes: new { @class = "label" })
+                </td>
+                <td>
+                    @Html.DropDownListFor(model => model.FK_Stack, new SelectList(Model.Stacks, "ID", "Name"), htmlAttributes: new { @class = "input" })
+                    @Html.ValidationMessageFor(model => model.FK_Stack, "", new { @class = "val-msg" })
+                </td>
+            </tr>
+        </table>
+        <div class="button-holder">
+            <input type="submit" value="Upload" class="btn btn-default" />
+        </div>
+    }
+</main>

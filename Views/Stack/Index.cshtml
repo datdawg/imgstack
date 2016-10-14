@@ -1,0 +1,90 @@
+﻿@using imgstack.Models
+@model imgstack.Models.StackViewModel
+@{
+    ViewBag.Title = "Stack";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+
+    <main class="stackpage">
+        <div class="main-content">
+            <h3 class="stack-date">Created on @Model.Stack.DateCreated.ToLongDateString()</h3>
+            <h1 class="stack-header">@Model.Stack.Name</h1>
+            <div class="stack-by">created by <a class="user-link" href="/user/@Model.User.Alias">@Model.User.Alias</a></div>
+            <div class="clr"></div>
+        </div>
+        @{
+            User CurrentUser = Session["User"] as User;
+
+            Session["CommentData"] = Model as StackViewModel;
+
+            if (CurrentUser.ID == Model.User.ID)
+            {
+                <div class="button-holder">
+                    <a class="btn btn-upload-image" href="/img/redirecttoupload/@Model.Stack.ID">Upload image</a>
+                </div>
+            }
+        }
+        <div class="masonry">
+            <ul class="grid effect-2" id="grid">
+                @foreach (var img in Model.Stack.Images)
+                {
+                    <li><a href="/img/@img.Filename-@img.ID"><img src="/content/img/userimages/@img.Filename.@img.Filetype "></a></li>
+                }
+            </ul>
+        </div>
+        <div class="clr"></div>
+        <div class="main-content">
+            <div class="comments">
+                @foreach (var comment in Model.Comments)
+            {
+                    <div class="comment">
+                        <div class="comment-top">
+                            <div class="date">@comment.DateCreated.ToShortDateString() - @comment.DateCreated.ToShortTimeString()</div>
+                            <a href="/User/@comment.User.Alias">@comment.User.Alias</a>
+                        </div>
+                        <div class="comment-mid">@comment.Text</div>
+                        @if (CurrentUser != null)
+                        {
+                            if (int.Parse(CurrentUser.ID.ToString()) == comment.FK_User)
+                            {
+                                <div class="comment-bottom">
+                                    <a href="/stack/deletecomment/@comment.ID" class="comment-option">Delete</a>
+                                </div>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+            @if (User != null)
+            {
+                <div class="new-comment">
+                    @using (Html.BeginForm("addcomment", "stack", FormMethod.Post))
+                {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "val-msg" })
+                        <div class="comment-input-holder">
+                            @Html.TextAreaFor(model => model.NewComment, new { @class = "input comment" })
+                            @Html.ValidationMessageFor(model => model.NewComment, "", new { @class = "val-msg" })
+                        </div>
+                        <div class="button-holder">
+                            <input type="submit" value="Add comment" class="btn btn-default" />
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </main>
+}
+
+<script src="/scripts/plugins/masonry/js/masonry.pkgd.min.js"></script>
+<script src="/scripts/plugins/masonry/js/imagesloaded.js"></script>
+<script src="/scripts/plugins/masonry/js/classie.js"></script>
+<script src="/scripts/plugins/masonry/js/AnimOnScroll.js"></script>
+<script>
+    new AnimOnScroll(document.getElementById('grid'), {
+        minDuration: 0.4,
+        maxDuration: 0.7,
+        viewportFactor: 0.2
+    });
+</script>

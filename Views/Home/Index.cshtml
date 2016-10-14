@@ -1,0 +1,48 @@
+﻿@using imgstack.Models
+@model imgstack.Models.HomeViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    <div class="slide-holder">
+        <div class="slick-inner">
+            @foreach (var img in Model.Images)
+            {
+                <div class="img-holder">
+                    <a href="/img/@img.Filename-@img.ID">
+                        <img src="~/content/img/userimages/@img.Filename.@img.Filetype" />
+                        <div class="title">
+                            <h2>@img.Name</h2>
+                            <span><a class="user-link" href="/user/@img.User.Alias">submitted by <strong>@img.User.Alias</strong></a> <a class="stack-link" href="/stack/@img.Stack.ID">to <strong>@img.Stack.Name</strong></a></span>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+    <main>
+        @if (Session["User"] == null)
+        {
+            <h1>
+                Welcome to imgstack!
+            </h1>
+            <p>This is a place where you can create all the <strong>stacks</strong> you want, and fill them with <strong>img</strong>'s. In other words: You can create individual albums and fill them with photos/pictures/images.</p>
+            <p>You can share stacks with other users. The creator of the stack decides which users get to add images to the given stack. You can also create private stacks if you just want a place to store your images for yourself.</p>
+
+            <p>Click <a href="/account/register">here</a> to create your profile and get started! Already have a profile? Click <a href="/account/login">here</a> to log in!</p>
+        }
+        else
+        {
+            User CurrentUser = Session["User"] as User;
+
+            <h1>Welcome @CurrentUser.FirstName!</h1>
+        }
+        <h2>Recently registered users:</h2>
+        @foreach (var user in Model.Users)
+        {
+            <a href="/user/@user.Alias">@user.Alias</a>
+        }
+    </main>
+}

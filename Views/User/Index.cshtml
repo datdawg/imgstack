@@ -1,0 +1,67 @@
+﻿@using imgstack.Models
+@model imgstack.Models.ProfileViewModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    User CurrentUser = Session["User"] as User;
+
+    <main class="profilepage">
+        <div class="profile-top">
+            <div class="profile-img-holder">
+                <div class="profile-img" style="background-image: url(/content/img/profiles/@Html.DisplayFor(model => model.User.Picture))"></div>
+            </div>
+            <h1 class="alias">@Html.DisplayFor(model => model.User.Alias)</h1>
+            <p class="description">@Html.DisplayFor(model => model.User.Description)</p>
+            <div class="clr"></div>
+        </div>
+        <div class="profile-stacks">
+            <div class="main-content">
+                <h2>Stacks</h2>
+            </div>
+            @foreach (var stack in Model.Stacks)
+            {
+                if (stack.Public == false && CurrentUser.ID != stack.FK_Creator || stack.Images.Count == 0 && CurrentUser.ID != stack.FK_Creator)
+                {
+
+                }
+                else
+                {
+                    <div class="stack-holder">
+                        <a href="/stack/@stack.ID" class="stack@(stack.Public == false ? " private" : null)" title="@(stack.Public == false ? "This stack is private and can only be seen by you" : null)">
+                            @foreach (var img in stack.Images.Take(4).OrderBy(p => p.ID))
+                            {
+                                <img class="stack-thumb" style="background: url(/content/img/userimages/@img.Filename.@img.Filetype); background-size: cover; background-position: center;" />
+                            }
+                        </a>
+                        <div class="stack-title">
+                            <h2>@stack.Name</h2>
+                        </div>
+                        <div class="stack-img-amount">
+                            @{int imgCount = stack.Images.Count;}
+                            @if (imgCount == 1)
+                            {
+                                <h4>@imgCount image</h4>
+                            }
+                            else
+                            {
+                                <h4>@imgCount images</h4>
+                            }
+                        </div>
+                    </div>
+                                    }
+                                }
+            <div class="clr"></div>
+            @if (CurrentUser.ID == Model.User.ID)
+            {
+                <div class="main-content">
+                    <div class="button-holder">
+                        <a class="btn btn-create-stack" href="/stack/create">Create new stack</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </main>
+}

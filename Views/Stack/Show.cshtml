@@ -1,0 +1,51 @@
+﻿@using imgstack.Models
+@model imgstack.Models.Stack
+@{
+    ViewBag.Title = "Show";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    DataContext _db = new DataContext();
+
+    int iStackCreatorID = Model.FK_Creator;
+    User user = _db.User.Where(p => p.ID == iStackCreatorID).FirstOrDefault();
+    string sStackAlias = user.Alias;
+
+    <main class="stackpage">
+        <div class="main-content">
+            <h1>@Model.Name</h1>
+            <div class="stack-by">created by <a class="user-link" href="/user/@sStackAlias">@sStackAlias</a></div>
+        </div>
+        <div class="button-holder">
+            <a class="btn btn-upload-image" href="/image/redirecttoupload/@Model.ID">Upload image</a>
+        </div>
+        <div class="masonry">
+            <ul class="grid effect-2" id="grid">
+                @foreach (var img in Model.Images)
+                {
+                    <li><a href="/image/@img.ID"><img src="/content/img/userimages/@img.Filename.@img.Filetype "></a></li>
+                }
+            </ul>
+        </div>
+        <div class="clr"></div>
+    </main>
+}
+
+<script src="/scripts/plugins/masonry/js/masonry.pkgd.min.js"></script>
+<script src="/scripts/plugins/masonry/js/imagesloaded.js"></script>
+<script src="/scripts/plugins/masonry/js/classie.js"></script>
+<script src="/scripts/plugins/masonry/js/AnimOnScroll.js"></script>
+<script>
+    new AnimOnScroll(document.getElementById('grid'), {
+        minDuration: 0.4,
+        maxDuration: 0.7,
+        viewportFactor: 0.2
+    });
+</script>
+
+
+
+
+
+
+

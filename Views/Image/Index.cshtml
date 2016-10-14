@@ -1,0 +1,58 @@
+﻿@using imgstack.Models
+@model imgstack.Models.ImageViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    Session["CommentData"] = Model as ImageViewModel;
+
+    <main class="imagepage">
+        <div class="main-content">
+            <h1>@Model.Image.Name</h1>
+        </div>
+        <div class="img-holder">
+            <img src="/content/img/userimages/@Model.Image.Filename.@Model.Image.Filetype" />
+        </div>
+        <div class="clr"></div>
+        <div class="comments">
+            @foreach (var comment in Model.Comments)
+            {
+                <div class="comment">
+                    <div class="comment-top">
+                        <div class="date">@comment.DateCreated.ToShortDateString() - @comment.DateCreated.ToShortTimeString()</div>
+                        <a href="/User/@comment.User.Alias">@comment.User.Alias</a>
+                    </div>
+                    <div class="comment-mid">@comment.Text</div>
+                    @if (Session["User"] != null)
+                    {
+                        User CurrentUser = Session["User"] as User;
+                        if (int.Parse(CurrentUser.ID.ToString()) == comment.FK_User)
+                        {
+                            <div class="comment-bottom">
+                                <a href="/image/deletecomment/@comment.ID" class="comment-option">Delete</a>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+        @if (User != null)
+            {
+            <div class="new-comment">
+                @using (Html.BeginForm("addcomment", "image", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true, "", new { @class = "val-msg" })
+                    <div class="comment-input-holder">
+                        @Html.TextAreaFor(model => model.NewComment, new { @class = "input comment" })
+                        @Html.ValidationMessageFor(model => model.NewComment, "", new { @class = "val-msg" })
+                    </div>
+                    <div class="button-holder">
+                        <input type="submit" value="Add comment" class="btn btn-default" />
+                    </div>
+                }
+            </div>
+        }
+    </main>
+}

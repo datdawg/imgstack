@@ -1,0 +1,29 @@
+﻿@model imgstack.Models.LoginViewModel
+@{
+    ViewBag.Title = "Login";
+}
+<link rel="stylesheet" href="~/content/css/global.min.css" />
+<main class="loginpage">
+    <div class="login-holder">
+        <h2>Login</h2>
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary()
+            <table class="tbl-form login">
+                <tr>
+                    <td>@Html.EditorFor(p => p.Alias, new { htmlAttributes = new { placeholder = "Alias" } })</td>
+                </tr>
+                <tr>
+                    <td>@Html.EditorFor(p => p.Password, new { htmlAttributes = new { placeholder = "Password" } })</td>
+                </tr>
+                <tr>
+                    <td>@Html.LabelFor(p => p.RememberLogin)@Html.EditorFor(p => p.RememberLogin)</td>
+                </tr>
+                <tr>
+                    <td><input type="submit" value="Log in!" /></td>
+                </tr>
+            </table>
+        }
+
+    </div>
+</main>
